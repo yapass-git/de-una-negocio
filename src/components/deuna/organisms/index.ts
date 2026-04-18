@@ -16,10 +16,7 @@ export { Modal } from "./Modal";
 export type { ModalProps } from "./Modal";
 
 export { PromoDiscountModal } from "./PromoDiscountModal";
-export type {
-  PromoDiscountModalProps,
-  PromoDiscountPayload,
-} from "./PromoDiscountModal";
+export type { PromoDiscountModalProps } from "./PromoDiscountModal";
 
 export { SalesStatsModal } from "./SalesStatsModal";
 export type { SalesStatsModalProps } from "./SalesStatsModal";

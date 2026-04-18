@@ -11,43 +11,31 @@ import {
 import { BalanceCard } from "../molecules/BalanceCard";
 import { NewsCard } from "../molecules/NewsCard";
 import { QuickAction } from "../molecules/QuickAction";
-import {
-  PromoDiscountModal,
-  type PromoDiscountPayload,
-} from "./PromoDiscountModal";
+import { PromoDiscountModal } from "./PromoDiscountModal";
 import { SalesStatsModal } from "./SalesStatsModal";
 
 export type GestionarPanelProps = {
-  /** Balance shown by the top `BalanceCard` (masked by default). */
   balance?: number;
-  /** Pending amount to receive — hidden when omitted. */
   pending?: number;
 };
 
-/** Tracks which of the two secondary modals (discount picker, sales
- *  stats) is currently visible. Only one can be open at a time. */
+/** Which of the independent modals is currently visible. `promo` owns
+ *  the full launch flow end-to-end (including its own success state);
+ *  `stats` is a read-only analytics view. Only one can be open at a
+ *  time. */
 type ActiveModal = "none" | "promo" | "stats";
 
 /**
  * Organism — Gestionar panel: balance card, quick-action grid and a
- * horizontal "Novedades" carousel. Owns the flow that launches the
- * Netlife discount promo: the picker modal calls the API and, on
- * success, hands back `{ campaign, delivered, percent }` so this
- * panel can open the stats modal with the real reach number.
+ * horizontal "Novedades" carousel. Each news card is an independent
+ * entry point; there's no forced progression between launching a
+ * promo and checking stats.
  */
 export function GestionarPanel({
   balance = 0,
   pending,
 }: GestionarPanelProps = {}) {
   const [modal, setModal] = useState<ActiveModal>("none");
-  const [lastResult, setLastResult] = useState<PromoDiscountPayload | null>(
-    null,
-  );
-
-  const handlePromoConfirm = (payload: PromoDiscountPayload) => {
-    setLastResult(payload);
-    setModal("stats");
-  };
 
   return (
     <div className="flex flex-col gap-5 px-4 pt-2 pb-4">
@@ -114,21 +102,25 @@ export function GestionarPanel({
               onPress={() => setModal("promo")}
             />
           </div>
+          <div role="listitem" className="w-[150px] shrink-0">
+            <NewsCard
+              tone="teal"
+              title="Estadísticas"
+              brand="deuna!"
+              onPress={() => setModal("stats")}
+            />
+          </div>
         </div>
       </section>
 
       <PromoDiscountModal
         open={modal === "promo"}
         onClose={() => setModal("none")}
-        onConfirm={handlePromoConfirm}
       />
 
       <SalesStatsModal
         open={modal === "stats"}
         onClose={() => setModal("none")}
-        delivered={lastResult?.delivered ?? 0}
-        percent={lastResult?.percent ?? null}
-        brand="Netlife"
       />
     </div>
   );

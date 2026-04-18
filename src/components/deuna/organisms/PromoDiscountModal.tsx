@@ -2,30 +2,21 @@
 
 import { useState } from "react";
 
-import type { Campaign } from "@/lib/api-types";
 import { createCampaign, upsertBusiness } from "@/lib/api";
 import { celebrate } from "@/lib/confetti";
 import { LA_VICENTINA, SEED_BUSINESS } from "@/lib/seed-location";
 
 import { Button } from "../atoms/Button";
+import { SuccessCheck } from "../atoms/SuccessCheck";
+import { Card } from "../molecules/Card";
 import { PercentGrid, type PercentChoice } from "../molecules/PercentGrid";
 import { PromoBanner } from "../molecules/PromoBanner";
+import { ReachCard } from "../molecules/ReachCard";
 import { Modal } from "./Modal";
-
-export type PromoDiscountPayload = {
-  /** Final campaign as stored by the backend. */
-  campaign: Campaign;
-  /** Nearby users that had an open EventSource at broadcast time. */
-  delivered: number;
-  /** Effective percent applied (preset or OTRO). */
-  percent: number;
-};
 
 export type PromoDiscountModalProps = {
   open: boolean;
   onClose: () => void;
-  /** Fired with the successful API response after "Empezar". */
-  onConfirm: (payload: PromoDiscountPayload) => void;
   brand?: string;
   bannerImageSrc?: string;
   options?: readonly number[];
@@ -39,16 +30,14 @@ export type PromoDiscountModalProps = {
 
 /**
  * Organism — full-screen sheet that asks the shopkeeper to pick a
- * discount percentage backed by a brand partner (e.g. Netlife). Also
- * owns the async launch: ensures the business exists on the API and
- * fires `POST /campaigns` with the chosen percent. The inner content
- * only mounts while the modal is open, which resets the selection
- * between openings without needing a clearing effect.
+ * discount percentage backed by a brand partner (e.g. Netlife). Owns
+ * the full launch flow end-to-end: picker → async POST → success
+ * state with the real delivered count. Closing the modal resets
+ * everything, because the inner content only mounts while `open`.
  */
 export function PromoDiscountModal({
   open,
   onClose,
-  onConfirm,
   brand = "Netlife",
   bannerImageSrc = "/assets/mascota.png",
   options = [5, 10, 15],
@@ -62,7 +51,7 @@ export function PromoDiscountModal({
     <Modal open={open} onClose={onClose} title="Promos">
       {open ? (
         <PromoDiscountContent
-          onConfirm={onConfirm}
+          onClose={onClose}
           brand={brand}
           bannerImageSrc={bannerImageSrc}
           options={options}
@@ -77,23 +66,25 @@ export function PromoDiscountModal({
   );
 }
 
-type PromoDiscountContentProps = Required<
-  Pick<
-    PromoDiscountModalProps,
-    | "onConfirm"
-    | "brand"
-    | "bannerImageSrc"
-    | "options"
-    | "title"
-    | "helper"
-    | "smallPrint"
-    | "ctaLabel"
-    | "radiusM"
-  >
->;
+type PromoDiscountContentProps = {
+  onClose: () => void;
+  brand: string;
+  bannerImageSrc: string;
+  options: readonly number[];
+  title: string;
+  helper: string;
+  smallPrint: string;
+  ctaLabel: string;
+  radiusM: number;
+};
+
+type LaunchResult = {
+  delivered: number;
+  percent: number;
+};
 
 function PromoDiscountContent({
-  onConfirm,
+  onClose,
   brand,
   bannerImageSrc,
   options,
@@ -107,6 +98,7 @@ function PromoDiscountContent({
   const [otherPct, setOtherPct] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<LaunchResult | null>(null);
 
   const parsedOther = Number(otherPct);
   const effectivePct =
@@ -140,13 +132,13 @@ function PromoDiscountContent({
         barrio: SEED_BUSINESS.barrio,
         location: LA_VICENTINA,
       });
-      const { campaign, delivered } = await createCampaign({
+      const { delivered } = await createCampaign({
         businessId: SEED_BUSINESS.id,
         type: "descuento-al-total",
         discountPct: effectivePct,
         radiusM,
       });
-      onConfirm({ campaign, delivered, percent: effectivePct });
+      setResult({ delivered, percent: effectivePct });
     } catch (err) {
       const raw = err instanceof Error ? err.message : String(err);
       const friendly = /failed to fetch|networkerror/i.test(raw)
@@ -157,6 +149,17 @@ function PromoDiscountContent({
       setLoading(false);
     }
   };
+
+  if (result) {
+    return (
+      <PromoLaunchSuccess
+        brand={brand}
+        delivered={result.delivered}
+        percent={result.percent}
+        onClose={onClose}
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-full flex-col">
@@ -236,6 +239,57 @@ function PromoDiscountContent({
           disabled={disabled}
           onClick={handleConfirm}
         />
+      </div>
+    </div>
+  );
+}
+
+type PromoLaunchSuccessProps = {
+  brand: string;
+  delivered: number;
+  percent: number;
+  onClose: () => void;
+};
+
+/** Success step shown in-place once the campaign was accepted by the
+ *  API. Kept inside `PromoDiscountModal` so the launch flow is fully
+ *  self-contained — the owner reads the affordance and taps "Listo"
+ *  to dismiss, without bouncing between modals. */
+function PromoLaunchSuccess({
+  brand,
+  delivered,
+  percent,
+  onClose,
+}: PromoLaunchSuccessProps) {
+  return (
+    <div className="flex min-h-full flex-col">
+      <div className="flex flex-1 flex-col items-stretch gap-4 px-4 pt-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <SuccessCheck size="lg" />
+          <div className="flex flex-col gap-1">
+            <h3 className="text-title-lg text-primary">¡Promo lanzada!</h3>
+            <p className="text-[14px] font-semibold text-text-secondary">
+              Aplicaste {percent}% con {brand}
+            </p>
+          </div>
+        </div>
+
+        <ReachCard delivered={delivered} />
+
+        <Card
+          variant="flat"
+          padding="md"
+          className="bg-primary-soft text-center"
+        >
+          <p className="text-[12px] font-medium leading-snug text-primary">
+            Revisá la vista <span className="font-bold">Estadísticas</span>{" "}
+            cuando quieras ver el impacto en tus ventas.
+          </p>
+        </Card>
+      </div>
+
+      <div className="sticky bottom-0 flex flex-col gap-2 border-t border-divider bg-surface-alt px-4 py-3">
+        <Button label="Listo" size="lg" onClick={onClose} />
       </div>
     </div>
   );

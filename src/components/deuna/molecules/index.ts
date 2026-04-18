@@ -27,6 +27,9 @@ export type { PromoBannerProps } from "./PromoBanner";
 export { QuickAction } from "./QuickAction";
 export type { QuickActionProps } from "./QuickAction";
 
+export { ReachCard } from "./ReachCard";
+export type { ReachCardProps } from "./ReachCard";
+
 export { SegmentedTabs } from "./SegmentedTabs";
 export type { SegmentedTabItem, SegmentedTabsProps } from "./SegmentedTabs";
 

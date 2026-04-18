@@ -31,28 +31,23 @@ type ActiveModal = "none" | "promo" | "stats";
 /**
  * Organism — Gestionar panel: balance card, quick-action grid and a
  * horizontal "Novedades" carousel. Owns the flow that launches the
- * Netlife discount promo: picking a percentage closes the promo modal
- * and opens the sales-stats modal as the natural consequence.
+ * Netlife discount promo: the picker modal calls the API and, on
+ * success, hands back `{ campaign, delivered, percent }` so this
+ * panel can open the stats modal with the real reach number.
  */
 export function GestionarPanel({
   balance = 0,
   pending,
 }: GestionarPanelProps = {}) {
   const [modal, setModal] = useState<ActiveModal>("none");
-  const [lastPayload, setLastPayload] = useState<PromoDiscountPayload | null>(
+  const [lastResult, setLastResult] = useState<PromoDiscountPayload | null>(
     null,
   );
 
   const handlePromoConfirm = (payload: PromoDiscountPayload) => {
-    setLastPayload(payload);
+    setLastResult(payload);
     setModal("stats");
   };
-
-  const discountLabel = lastPayload
-    ? lastPayload.percent != null
-      ? `Aplicaste ${lastPayload.percent}% con Netlife`
-      : "Promo personalizada activa"
-    : undefined;
 
   return (
     <div className="flex flex-col gap-5 px-4 pt-2 pb-4">
@@ -131,7 +126,9 @@ export function GestionarPanel({
       <SalesStatsModal
         open={modal === "stats"}
         onClose={() => setModal("none")}
-        appliedDiscountLabel={discountLabel}
+        delivered={lastResult?.delivered ?? 0}
+        percent={lastResult?.percent ?? null}
+        brand="Netlife"
       />
     </div>
   );

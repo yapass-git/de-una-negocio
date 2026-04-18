@@ -45,3 +45,6 @@ export type {
 
 export { SpinnerRing } from "./SpinnerRing";
 export type { SpinnerRingProps, SpinnerRingSize } from "./SpinnerRing";
+
+export { SuccessCheck } from "./SuccessCheck";
+export type { SuccessCheckProps, SuccessCheckSize } from "./SuccessCheck";

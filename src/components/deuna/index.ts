@@ -3,10 +3,10 @@
  *
  *   atoms/      → AmountText · Avatar · Badge · Button · Divider · Emoji
  *                 IconButton · Input · NumericKey · PercentOption
- *                 ProgressBar · SegmentedOption · SpinnerRing
+ *                 ProgressBar · SegmentedOption · SpinnerRing · SuccessCheck
  *   molecules/  → AmountDisplay · BalanceCard · BarChart · Card · NewsCard
  *                 NumericKeypad · PercentGrid · PromoBanner · QuickAction
- *                 SegmentedTabs · SelectableRow
+ *                 ReachCard · SegmentedTabs · SelectableRow
  *   organisms/  → AppBottomNav · BusinessHeader · CobrarPanel · GestionarPanel
  *                 Modal · PromoDiscountModal · SalesStatsModal
  *

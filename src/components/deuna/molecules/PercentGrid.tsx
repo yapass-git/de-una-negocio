@@ -1,5 +1,7 @@
 "use client";
 
+import type { MouseEvent } from "react";
+
 import { PercentOption } from "../atoms/PercentOption";
 
 export type PercentChoice = number | "other";
@@ -8,7 +10,13 @@ export type PercentGridProps = {
   /** Discount percentages rendered in-order before the "OTRO" cell. */
   options?: readonly number[];
   value: PercentChoice | null;
-  onChange: (choice: PercentChoice) => void;
+  /** Called with the new choice and, when available, the underlying
+   *  click event so callers can pin effects (confetti, ripples…) to
+   *  the tapped cell. */
+  onChange: (
+    choice: PercentChoice,
+    event?: MouseEvent<HTMLButtonElement>,
+  ) => void;
   /** Label of the fallback cell. Defaults to "OTRO". */
   otherLabel?: string;
 };
@@ -32,13 +40,13 @@ export function PercentGrid({
           key={pct}
           label={`${pct}%`}
           selected={value === pct}
-          onClick={() => onChange(pct)}
+          onClick={(e) => onChange(pct, e)}
         />
       ))}
       <PercentOption
         label={otherLabel}
         selected={value === "other"}
-        onClick={() => onChange("other")}
+        onClick={(e) => onChange("other", e)}
       />
     </div>
   );

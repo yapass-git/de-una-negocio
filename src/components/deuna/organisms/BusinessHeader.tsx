@@ -1,57 +1,61 @@
 "use client";
 
-import { IoHeadsetOutline, IoNotificationsOutline, IoStorefront } from "react-icons/io5";
+import {
+  IoHeadsetOutline,
+  IoNotificationsOutline,
+  IoQrCodeOutline,
+} from "react-icons/io5";
 
 import { cn } from "@/lib/cn";
+import { Avatar } from "../atoms/Avatar";
 import { Badge } from "../atoms/Badge";
 import { IconButton } from "../atoms/IconButton";
 
 export type BusinessHeaderProps = {
-  /** Display name of the shop owner (e.g. "Martha"). */
+  /** Display name of the owner (e.g. "Julian"). Rendered as `Hola! {name}`. */
   ownerName: string;
-  /** Role pill shown next to the name (e.g. "Administrador"). */
+  /** Role pill shown right next to the name ("Admin", "Vendedor", …). */
   ownerRole?: string;
-  /** Business name below the greeting ("Fruteria Martha Kiting"). */
+  /** Sub-line under the greeting — typically the brand or business name. */
   businessName: string;
-  /** Unread notifications count. Shows a red dot/badge on the bell. */
+  /** Unread-notifications indicator on the bell icon. */
   notificationCount?: number;
+  onScanPress?: () => void;
   onBellPress?: () => void;
   onSupportPress?: () => void;
   className?: string;
 };
 
 /**
- * Organism — top bar used across Deuna Negocios screens. Shows a
- * storefront glyph, owner greeting + role pill, business name, and two
- * icon actions (notifications + live support).
+ * Organism — top bar of the admin app. Layout:
  *
- * The role pill uses `primary-soft` and stays inline with the name; the
- * notification bell carries an optional `Badge` atom when there are
- * unread items.
+ *   ┌───────────────────────────────────────────────────────────────┐
+ *   │ [J]  Hola! Julian  (Admin)        [QR] [🔔] [🎧]             │
+ *   │      Yapass                                                  │
+ *   └───────────────────────────────────────────────────────────────┘
+ *
+ * Every piece composes an atom: `Avatar`, `Badge`, `IconButton`. No
+ * inline styling or state — callbacks are wired by the parent.
  */
 export function BusinessHeader({
   ownerName,
   ownerRole,
   businessName,
   notificationCount = 0,
+  onScanPress,
   onBellPress,
   onSupportPress,
   className,
 }: BusinessHeaderProps) {
   return (
     <header
-      className={cn(
-        "flex items-center gap-3 px-4 pt-3 pb-3",
-        className,
-      )}
+      className={cn("flex items-center gap-3 px-4 pt-3 pb-3", className)}
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-soft">
-        <IoStorefront className="h-[22px] w-[22px] text-primary" />
-      </div>
+      <Avatar name={ownerName} size="md" ringClassName="" />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-2">
-          <span className="text-title-sm truncate text-primary">
+          <span className="truncate text-title-sm text-primary">
             ¡Hola! {ownerName}
           </span>
           {ownerRole ? (
@@ -65,13 +69,22 @@ export function BusinessHeader({
         </span>
       </div>
 
-      <div className="relative flex shrink-0 items-center gap-1">
+      <div className="relative flex shrink-0 items-center gap-0.5">
+        <IconButton
+          aria-label="Escanear QR"
+          onClick={onScanPress}
+          variant="ghost"
+          size="sm"
+          icon={<IoQrCodeOutline className="h-[22px] w-[22px] text-primary" />}
+        />
         <IconButton
           aria-label="Notificaciones"
           onClick={onBellPress}
           variant="ghost"
           size="sm"
-          icon={<IoNotificationsOutline className="h-[22px] w-[22px] text-primary" />}
+          icon={
+            <IoNotificationsOutline className="h-[22px] w-[22px] text-primary" />
+          }
         />
         {notificationCount > 0 ? (
           <Badge

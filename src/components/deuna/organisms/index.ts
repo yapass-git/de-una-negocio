@@ -1,10 +1,13 @@
 /** Atomic design — organisms (complex, screen-level compositions). */
 
+export { AppBottomNav } from "./AppBottomNav";
+export type { AppBottomNavProps, AppBottomNavTabId } from "./AppBottomNav";
+
 export { BusinessHeader } from "./BusinessHeader";
 export type { BusinessHeaderProps } from "./BusinessHeader";
 
-export { PopupModal } from "./PopupModal";
-export type { PopupModalProps, PopupModalSize } from "./PopupModal";
+export { CobrarPanel } from "./CobrarPanel";
+export type { CobrarPanelProps } from "./CobrarPanel";
 
-export { PromoLaunchedModal } from "./PromoLaunchedModal";
-export type { PromoLaunchedModalProps } from "./PromoLaunchedModal";
+export { GestionarPanel } from "./GestionarPanel";
+export type { GestionarPanelProps } from "./GestionarPanel";

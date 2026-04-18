@@ -1,7 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import {
+  IoChevronForward,
+  IoEyeOffOutline,
+  IoEyeOutline,
+} from "react-icons/io5";
 
 import { cn } from "@/lib/cn";
 import { AmountText } from "../atoms/AmountText";
@@ -20,6 +25,10 @@ export type BalanceCardProps = {
   pendingLabel?: string;
   /** Controls initial visibility. */
   defaultVisible?: boolean;
+  /** When provided, the card becomes tappable and renders a trailing
+   *  chevron. Use `href` for navigation; `onPress` for ad-hoc handlers. */
+  href?: string;
+  onPress?: () => void;
   className?: string;
 };
 
@@ -44,50 +53,97 @@ export function BalanceCard({
   label = "Mi Saldo",
   pendingLabel = "Por recibir",
   defaultVisible = true,
+  href,
+  onPress,
   className,
 }: BalanceCardProps) {
   const [visible, setVisible] = useState(defaultVisible);
+  const isInteractive = href != null || onPress != null;
 
-  return (
-    <Card
-      variant="elevated"
-      padding="lg"
-      className={cn("flex flex-col gap-1", className)}
-    >
-      <span className="text-[12px] font-semibold text-text-secondary">
-        {label}
-      </span>
-
-      <div className="flex items-center gap-2">
-        <AmountText
-          value={`${currency}${formatLatam(balance)}`}
-          visible={visible}
-          size="xl"
-          className="text-primary"
-        />
-        <button
-          type="button"
-          onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Ocultar saldo" : "Mostrar saldo"}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-alt"
-        >
-          {visible ? (
-            <IoEyeOutline className="h-[18px] w-[18px]" />
-          ) : (
-            <IoEyeOffOutline className="h-[18px] w-[18px]" />
-          )}
-        </button>
-      </div>
-
-      {pending != null ? (
-        <span className="text-[12px] font-medium text-text-secondary">
-          {pendingLabel}{" "}
-          <span className="font-bold text-accent-green">
-            {currency}
-            {formatLatam(pending)}
-          </span>
+  const body = (
+    <>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-[12px] font-semibold text-text-secondary">
+          {label}
         </span>
+        <div className="flex items-center gap-2">
+          <AmountText
+            value={`${currency}${formatLatam(balance)}`}
+            visible={visible}
+            size="xl"
+            className="text-primary"
+          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setVisible((v) => !v);
+            }}
+            aria-label={visible ? "Ocultar saldo" : "Mostrar saldo"}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-alt"
+          >
+            {visible ? (
+              <IoEyeOutline className="h-[18px] w-[18px]" />
+            ) : (
+              <IoEyeOffOutline className="h-[18px] w-[18px]" />
+            )}
+          </button>
+        </div>
+        {pending != null ? (
+          <span className="text-[12px] font-medium text-text-secondary">
+            {pendingLabel}{" "}
+            <span className="font-bold text-accent-green">
+              {currency}
+              {formatLatam(pending)}
+            </span>
+          </span>
+        ) : null}
+      </div>
+      {isInteractive ? (
+        <IoChevronForward className="h-[22px] w-[22px] shrink-0 text-text-muted" />
       ) : null}
+    </>
+  );
+
+  const cardClasses = cn(
+    "flex items-center gap-3",
+    isInteractive && "cursor-pointer active:opacity-85",
+    className,
+  );
+
+  if (href) {
+    return (
+      <Link href={href} aria-label={label} className="block">
+        <Card variant="elevated" padding="lg" className={cardClasses}>
+          {body}
+        </Card>
+      </Link>
+    );
+  }
+  if (onPress) {
+    return (
+      <Card
+        variant="elevated"
+        padding="lg"
+        className={cardClasses}
+        role="button"
+        tabIndex={0}
+        onClick={onPress}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onPress();
+          }
+        }}
+      >
+        {body}
+      </Card>
+    );
+  }
+  return (
+    <Card variant="elevated" padding="lg" className={cardClasses}>
+      {body}
     </Card>
   );
 }

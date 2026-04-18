@@ -24,27 +24,23 @@ const CAMPAIGNS: Campaign[] = [
     title: "Vuelva Veci",
     description:
       "Cuando compra por una vez, se le da un descuento personalizado.",
-    pillTone: "accent-green",
   },
   {
     id: "refiera-una-vez",
     title: "Refiera Una Vez",
     description:
       "Si un cliente es referido a su local gana un descuento.",
-    pillTone: "primary",
   },
   {
     id: "compre-3-veces",
     title: "Compre 3 Veces",
     description:
       "Si un cliente compra 3 veces, se puede hacer un descuento.",
-    pillTone: "accent-yellow",
   },
   {
     id: "apure-veci",
     title: "Apure, Veci",
     description: "Descuentos en productos por vencer.",
-    pillTone: "accent-green",
   },
 ];
 

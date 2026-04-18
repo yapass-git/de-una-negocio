@@ -28,7 +28,7 @@ export { Input } from "./Input";
 export type { InputProps } from "./Input";
 
 export { PercentPill } from "./PercentPill";
-export type { PercentPillProps, PercentPillSize, PercentPillTone } from "./PercentPill";
+export type { PercentPillProps, PercentPillSize } from "./PercentPill";
 
 export { ProgressBar } from "./ProgressBar";
 export type { ProgressBarProps } from "./ProgressBar";

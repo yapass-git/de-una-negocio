@@ -2,16 +2,16 @@
 
 import { cn } from "@/lib/cn";
 import { BusinessMascot } from "../atoms/BusinessMascot";
-import { PercentPill, type PercentPillTone } from "../atoms/PercentPill";
+import { PercentPill } from "../atoms/PercentPill";
 
 export type CampaignTypeCardProps = {
   id: string;
   title: string;
   description: string;
-  /** Tone for the discount pill on the top-right corner. */
-  pillTone?: PercentPillTone;
-  /** Path of the mascot PNG (optional — falls back to the SVG placeholder). */
+  /** Override the mascot PNG. Defaults to `/assets/mascota.png`. */
   mascotSrc?: string;
+  /** Override the percent PNG. Defaults to `/assets/porcentaje.png`. */
+  pillSrc?: string;
   /** Currently-selected id from the parent. Triggers the purple ring. */
   selected?: boolean;
   onSelect?: (id: string) => void;
@@ -20,9 +20,10 @@ export type CampaignTypeCardProps = {
 /**
  * Molecule — one of the four campaign types on the "Lanza Tu Próxima
  * Campaña" screen. Composed from:
- *   PercentPill   (atom — corner discount badge)
- *   BusinessMascot (atom — right-aligned illustration)
- *   title + description (pure text primitives)
+ *
+ *   PercentPill    (atom — top-right % illustration)
+ *   BusinessMascot (atom — right-aligned mascot illustration)
+ *   title + description (text)
  *
  * Acts as a radio-style selector: tapping it fires `onSelect(id)`.
  */
@@ -30,8 +31,8 @@ export function CampaignTypeCard({
   id,
   title,
   description,
-  pillTone = "accent-green",
   mascotSrc,
+  pillSrc,
   selected = false,
   onSelect,
 }: CampaignTypeCardProps) {
@@ -41,27 +42,27 @@ export function CampaignTypeCard({
       onClick={() => onSelect?.(id)}
       aria-pressed={selected}
       className={cn(
-        "relative flex w-full items-stretch gap-3 rounded-[var(--radius-lg)] bg-primary-soft px-4 py-4 text-left transition-all",
+        "relative flex w-full items-stretch gap-3 overflow-hidden rounded-[var(--radius-lg)] bg-primary-soft px-4 py-4 text-left transition-all",
         "cursor-pointer active:scale-[0.99] hover:bg-primary-soft/80",
         selected
           ? "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[var(--shadow-card)]"
           : "ring-1 ring-transparent",
       )}
     >
-      <div className="flex flex-1 flex-col justify-center gap-1 pr-16">
+      <div className="flex flex-1 flex-col justify-center gap-1 pr-20">
         <span className="text-title-sm text-primary">{title}</span>
         <span className="text-sm leading-[18px] text-ink/80">{description}</span>
       </div>
 
-      <div className="flex items-center">
-        <BusinessMascot src={mascotSrc} size={72} />
-      </div>
-
       <PercentPill
-        tone={pillTone}
+        src={pillSrc}
         size="md"
         className="absolute right-3 top-3"
       />
+
+      <div className="flex items-end">
+        <BusinessMascot src={mascotSrc} size={72} />
+      </div>
     </button>
   );
 }

@@ -98,7 +98,7 @@ export default function PromosScreen() {
         onBack={() => router.back()}
         title={
           <>
-            Crea descuentos para tus clientes con
+            Crea cashback para tus clientes con
             <span className="ml-1 lowercase">yaPass</span>
           </>
         }
@@ -107,7 +107,7 @@ export default function PromosScreen() {
       {/* Picker */}
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-4 pt-4">
         <h1 className="text-title-md text-primary">
-          Aplica un descuento al Total
+          Aplica cashback al Total
         </h1>
         <p className="text-[14px] font-medium text-text-primary">
           Elije el cashback a aplicar:
@@ -157,7 +157,7 @@ export default function PromosScreen() {
         ) : null}
 
         <p className="px-1 text-center text-[13px] font-medium text-text-primary">
-          El descuento aplicado será asumido por tu tienda.
+          El cashback aplicado será asumido por tu tienda.
         </p>
       </div>
 

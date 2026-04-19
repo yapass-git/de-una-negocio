@@ -19,12 +19,11 @@ export type GestionarPanelProps = {
 
 /**
  * Organism — Gestionar panel: balance card, quick-action grid and a
- * vertical "Novedades" feed. Each news card is an independent entry
- * point that deep-links into a dedicated route (`/promos`,
- * `/estadisticas`, `/desafios`); the panel itself is purely
- * presentational now that the flows live as full screens. The feed
- * scrolls vertically (banking-app style) instead of the old
- * horizontal carousel so every item sits at full card width.
+ * 2-column "Novedades" shelf ("hielera"). Each news card is an
+ * independent entry point that deep-links into a dedicated route
+ * (`/promos`, `/estadisticas`, `/desafios`); the panel itself is
+ * purely presentational now that the flows live as full screens.
+ * Cards render in their compact `square` form so two fit per row.
  */
 export function GestionarPanel({
   balance = 0,
@@ -71,13 +70,12 @@ export function GestionarPanel({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-title-sm text-primary">Novedades Deuna Negocios</h2>
-        <div className="flex flex-col gap-3" role="list">
+        <div className="grid grid-cols-2 gap-3" role="list">
           {/* Real, navegables: van primero porque son los flows
               implementados que el shopkeeper va a usar día a día. */}
           <div role="listitem">
             <NewsCard
               tone="teal"
-              orientation="wide"
               title="Lanzar Promociones"
               brand="deuna!"
               onPress={() => router.push("/promos")}
@@ -86,7 +84,6 @@ export function GestionarPanel({
           <div role="listitem">
             <NewsCard
               tone="teal"
-              orientation="wide"
               title="Estadísticas"
               brand="deuna!"
               onPress={() => router.push("/estadisticas")}
@@ -95,7 +92,6 @@ export function GestionarPanel({
           <div role="listitem">
             <NewsCard
               tone="lavender"
-              orientation="wide"
               title="Desafíos y Premios"
               brand="deuna!"
               onPress={() => router.push("/desafios")}
@@ -106,7 +102,6 @@ export function GestionarPanel({
           <div role="listitem">
             <NewsCard
               tone="teal"
-              orientation="wide"
               title="Agrega vendedores a tu equipo"
               brand="deuna!"
             />
@@ -114,7 +109,6 @@ export function GestionarPanel({
           <div role="listitem">
             <NewsCard
               tone="teal"
-              orientation="wide"
               title="Administra tus ventas con tu caja"
               brand="deuna!"
             />

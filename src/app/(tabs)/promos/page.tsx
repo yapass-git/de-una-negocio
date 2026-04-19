@@ -170,8 +170,10 @@ export default function PromosScreen() {
         ) : null}
       </div>
 
-      {/* Sticky CTA */}
-      <div className="sticky bottom-0 mt-4 flex flex-col gap-2 border-t border-divider bg-surface-alt px-4 py-3">
+      {/* Sticky CTA — pinned above the bottom nav using the global
+          `--app-bottom-nav-height` token so the button can never get
+          covered by the tab bar (or by the device's bottom safe-area). */}
+      <div className="sticky bottom-(--app-bottom-nav-height) mt-4 flex flex-col gap-2 border-t border-divider bg-surface-alt px-4 py-3">
         {error ? (
           <p
             role="alert"

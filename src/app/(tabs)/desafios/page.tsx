@@ -3,9 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IoArrowBack } from "react-icons/io5";
 
-import { Button, IconButton } from "@/components/deuna";
+import { Button } from "@/components/deuna";
 
 /**
  * Desafíos — listing of all active challenges for the shopkeeper.
@@ -19,17 +18,11 @@ export default function DesafiosScreen() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* Hero — lavender card with the trophy mascot. */}
+      {/* Hero — lavender card with the trophy mascot. The Beneficios
+          tab in the bottom nav already lights up here, so the back
+          arrow that used to live in the top-left corner is gone: the
+          shopkeeper navigates between tabs via the navbar instead. */}
       <section className="relative h-[202px] w-full overflow-hidden bg-gradient-to-b from-[#f6eeff] to-[#e7dcf2] pt-[max(env(safe-area-inset-top),0.5rem)]">
-        <IconButton
-          aria-label="Volver"
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="absolute left-2 top-3 z-10 text-primary"
-          icon={<IoArrowBack className="h-5 w-5" />}
-        />
-
         <div className="relative flex h-full items-center">
           <div className="relative h-[175px] w-[151px] shrink-0 pl-3">
             <Image
@@ -74,7 +67,7 @@ export default function DesafiosScreen() {
       </div>
 
       {/* Sticky CTA */}
-      <div className="sticky bottom-0 mt-6 border-t border-divider bg-surface-alt px-4 py-3">
+      <div className="sticky bottom-(--app-bottom-nav-height) mt-6 border-t border-divider bg-surface-alt px-4 py-3">
         <Button
           label="Empezar"
           size="lg"
@@ -169,9 +162,6 @@ function SponsoredCardBody({
 
         {progress ? (
           <div className="flex items-center gap-2">
-            <span className="text-[12px] font-semibold text-primary underline underline-offset-2">
-              Ver Ubicación
-            </span>
             <div className="relative h-[3px] flex-1 rounded-full bg-text-muted/40">
               <span
                 className="absolute inset-y-0 left-0 rounded-full bg-primary"

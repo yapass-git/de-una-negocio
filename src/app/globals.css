@@ -54,6 +54,30 @@
 }
 
 /**
+ * App chrome metrics — exposed so any sticky/fixed element rendered
+ * above the bottom nav can offset itself without hard-coding the bar
+ * height. The bar is `h-16` (64px) + 1px top border + ~5px vertical
+ * padding + the device's safe-area inset.
+ */
+:root {
+  --app-bottom-nav-height: calc(
+    4.375rem + env(safe-area-inset-bottom, 0.25rem)
+  );
+}
+
+/**
+ * App-shell scroll behavior — `overscroll-behavior: none` kills the
+ * rubber-band / bounce effect when the content already fits the
+ * viewport (e.g. the Beneficios listing) so the app feels native
+ * instead of like a webpage. Scrolling still works normally on
+ * screens whose content exceeds the viewport.
+ */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+/**
  * Typography scale — semantic utilities that bundle size + line-height
  * + weight + color so components tag text by its role instead of
  * re-stringing Tailwind classes.

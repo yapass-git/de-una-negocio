@@ -21,6 +21,8 @@ export type PercentGridProps = {
   otherLabel?: string;
   /** Suffix appended to numeric options. Defaults to "%" (discount). */
   valueSuffix?: string;
+  /** Disables every cell (used while launching). */
+  disabled?: boolean;
 };
 
 /**
@@ -35,6 +37,7 @@ export function PercentGrid({
   onChange,
   otherLabel = "OTRO",
   valueSuffix = "%",
+  disabled = false,
 }: PercentGridProps) {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -43,12 +46,14 @@ export function PercentGrid({
           key={pct}
           label={`${pct}${valueSuffix}`}
           selected={value === pct}
+          disabled={disabled}
           onClick={(e) => onChange(pct, e)}
         />
       ))}
       <PercentOption
         label={otherLabel}
         selected={value === "other"}
+        disabled={disabled}
         onClick={(e) => onChange("other", e)}
       />
     </div>

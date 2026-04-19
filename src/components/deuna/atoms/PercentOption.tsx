@@ -33,7 +33,7 @@ export function PercentOption({
       className={cn(
         "flex h-[88px] w-full select-none items-center justify-center rounded-[var(--radius-lg)]",
         "border-[1.5px] bg-white text-[32px] font-extrabold transition-colors",
-        "cursor-pointer active:opacity-85",
+        "cursor-pointer active:opacity-85 disabled:cursor-not-allowed disabled:opacity-60",
         selected
           ? "border-primary text-primary"
           : "border-line text-text-primary",

@@ -110,18 +110,24 @@ export default function PromosScreen() {
           Aplica cashback al Total
         </h1>
         <p className="text-[14px] font-medium text-text-primary">
-          Elije el cashback a aplicar:
+          Elije el cashback (%) a aplicar:
         </p>
 
-        <PercentGrid
-          options={[5, 10, 15]}
-          value={choice}
-          valueSuffix=""
-          onChange={(c) => {
-            setChoice(c);
-            setError(null);
-          }}
-        />
+        <div className="relative">
+          <PercentGrid
+            options={[5, 10, 15]}
+            value={choice}
+            valueSuffix="%"
+            disabled={loading || delivered != null}
+            onChange={(c) => {
+              setChoice(c);
+              setError(null);
+            }}
+          />
+          {loading ? (
+            <div className="pointer-events-none absolute inset-0 rounded-[var(--radius-lg)] bg-white/40 backdrop-blur-[1px]" />
+          ) : null}
+        </div>
 
         {choice === "other" ? (
           <div className="flex flex-col gap-1 rounded-[var(--radius-lg)] border-[1.5px] border-primary bg-white px-4 py-3">
@@ -140,6 +146,7 @@ export default function PromosScreen() {
                 min={1}
                 max={99}
                 value={otherAmount}
+                disabled={loading || delivered != null}
                 onChange={(e) => {
                   const raw = e.target.value
                     .replace(/[^0-9]/g, "")
@@ -162,6 +169,17 @@ export default function PromosScreen() {
       </div>
 
       <div className="mt-auto flex shrink-0 flex-col gap-2 border-t border-divider bg-surface-alt px-4 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+        {loading ? (
+          <div className="flex items-center justify-center gap-2 rounded-[var(--radius-md)] bg-primary-soft px-3 py-2">
+            <span
+              aria-hidden
+              className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
+            />
+            <span className="text-[12px] font-semibold text-primary">
+              Lanzando promo…
+            </span>
+          </div>
+        ) : null}
         {error ? (
           <p
             role="alert"

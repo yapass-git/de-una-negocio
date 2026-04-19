@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { AppBottomNav } from "@/components/deuna";
+import { AdminAccessGate, AppBottomNav } from "@/components/deuna";
 
 /**
  * Routes that take over the full viewport and therefore should NOT
@@ -18,9 +18,12 @@ function isFullBleed(pathname: string | null): boolean {
 }
 
 /**
- * Shell shared by every tabbed route. Renders the page content with
- * enough bottom padding to clear the fixed `AppBottomNav`, except on
- * full-bleed detail screens where the nav is suppressed.
+ * Shell shared by every tabbed route. Sits behind `AdminAccessGate`
+ * so the admin console stays invisible (no tab bar, no pages) until
+ * the shopkeeper scans the QR or types the access code. Renders the
+ * page content with enough bottom padding to clear the fixed
+ * `AppBottomNav`, except on full-bleed detail screens where the nav
+ * is suppressed.
  */
 export default function TabsLayout({
   children,
@@ -31,9 +34,11 @@ export default function TabsLayout({
   const fullBleed = isFullBleed(pathname);
 
   return (
-    <div className="relative flex min-h-screen flex-1 flex-col">
-      <main className={fullBleed ? "flex-1" : "flex-1 pb-20"}>{children}</main>
-      {fullBleed ? null : <AppBottomNav />}
-    </div>
+    <AdminAccessGate>
+      <div className="relative flex min-h-screen flex-1 flex-col">
+        <main className={fullBleed ? "flex-1" : "flex-1 pb-20"}>{children}</main>
+        {fullBleed ? null : <AppBottomNav />}
+      </div>
+    </AdminAccessGate>
   );
 }

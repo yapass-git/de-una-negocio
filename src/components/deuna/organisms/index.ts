@@ -1,5 +1,8 @@
 /** Atomic design — organisms (complex, screen-level compositions). */
 
+export { AdminAccessGate } from "./AdminAccessGate";
+export type { AdminAccessGateProps } from "./AdminAccessGate";
+
 export { AppBottomNav } from "./AppBottomNav";
 export type { AppBottomNavProps, AppBottomNavTabId } from "./AppBottomNav";
 

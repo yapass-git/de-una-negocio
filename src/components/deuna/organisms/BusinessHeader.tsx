@@ -2,10 +2,12 @@
 
 import {
   IoHeadsetOutline,
+  IoLogOutOutline,
   IoNotificationsOutline,
   IoQrCodeOutline,
 } from "react-icons/io5";
 
+import { lockAdmin } from "@/lib/admin-access";
 import { cn } from "@/lib/cn";
 import { Avatar } from "../atoms/Avatar";
 import { Badge } from "../atoms/Badge";
@@ -23,6 +25,14 @@ export type BusinessHeaderProps = {
   onScanPress?: () => void;
   onBellPress?: () => void;
   onSupportPress?: () => void;
+  /**
+   * Optional custom sign-out handler. Defaults to clearing the admin
+   * unlock flag and reloading so the `AdminAccessGate` takes over
+   * again. Omit to opt out of the lock affordance entirely.
+   */
+  onLockPress?: () => void;
+  /** Hides the "Bloquear" button (useful for showcases). */
+  hideLock?: boolean;
   className?: string;
 };
 
@@ -45,8 +55,19 @@ export function BusinessHeader({
   onScanPress,
   onBellPress,
   onSupportPress,
+  onLockPress,
+  hideLock = false,
   className,
 }: BusinessHeaderProps) {
+  const handleLock = () => {
+    if (onLockPress) {
+      onLockPress();
+      return;
+    }
+    lockAdmin();
+    if (typeof window !== "undefined") window.location.reload();
+  };
+
   return (
     <header
       className={cn("flex items-center gap-3 px-4 pt-3 pb-3", className)}
@@ -102,6 +123,15 @@ export function BusinessHeader({
           size="sm"
           icon={<IoHeadsetOutline className="h-[22px] w-[22px] text-primary" />}
         />
+        {hideLock ? null : (
+          <IconButton
+            aria-label="Bloquear consola"
+            onClick={handleLock}
+            variant="ghost"
+            size="sm"
+            icon={<IoLogOutOutline className="h-[22px] w-[22px] text-primary" />}
+          />
+        )}
       </div>
     </header>
   );
